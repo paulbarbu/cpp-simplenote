@@ -27,6 +27,7 @@ using std::cout; //TODO: remove
 Simplenote::Simplenote(const char *email, const char *password){
     _email = email;
     _password = password;
+    //TODO: delete these as fast as I can from the memory
 }
 
 /**
