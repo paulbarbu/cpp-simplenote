@@ -1,8 +1,7 @@
 #include "includes/simplenote.hpp"
 
+using namespace std;
+
 int main(){
-    Simplenote a("paul", "mypass");
-    Simplenote b("foo", "bar");
-    a.debug();
-    b.debug();
+    Simplenote a("", "");
 }
