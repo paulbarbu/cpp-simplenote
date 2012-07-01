@@ -20,7 +20,12 @@ using std::cout;
 
 /**
  * TODO:
- * check how to compile a library
+ * add tests
+ * 
+ * add docs
+ * 
+ * add a macro for DEBUG wich will set CURLOPT_VERBOSE
+ * The debug macro will be set by make debug via -DDEBUG
  */
 
 /**
@@ -72,13 +77,13 @@ void Simplenote::init(){
         throw InitError("Could not initialize the cURL handler!");
     }
 
-    bool setup = curl_easy_setopt(handle, CURLOPT_ERRORBUFFER, err_buffer) &&
-        curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L) && // FIXME: remove in production
-        curl_easy_setopt(handle, CURLOPT_NOPROGRESS, 1L) &&
-        curl_easy_setopt(handle, CURLOPT_POSTFIELDSIZE, -1) &&
-        curl_easy_setopt(handle, CURLOPT_USERAGENT, user_agent.c_str()) &&
-        curl_easy_setopt(handle, CURLOPT_MAXREDIRS, 0L) &&
-        curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, 1L) &&
+    bool setup = curl_easy_setopt(handle, CURLOPT_ERRORBUFFER, err_buffer) ||
+        curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L) || // FIXME: remove in production
+        curl_easy_setopt(handle, CURLOPT_NOPROGRESS, 1L) ||
+        curl_easy_setopt(handle, CURLOPT_POSTFIELDSIZE, -1) ||
+        curl_easy_setopt(handle, CURLOPT_USERAGENT, user_agent.c_str()) ||
+        curl_easy_setopt(handle, CURLOPT_MAXREDIRS, 0L) ||
+        curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, 1L) ||
         curl_easy_setopt(handle, CURLOPT_SSL_VERIFYHOST, 2);
 
     /**
@@ -97,9 +102,10 @@ void Simplenote::authenticate(string req_body){
      * else it will have a different value, see: man libcurl-errors
      * for a list of error codes and why 0 represents success.
      */
-    bool setup = curl_easy_setopt(handle, CURLOPT_URL, login_url.c_str()) &&
-        curl_easy_setopt(handle, CURLOPT_POSTFIELDS, req_body.c_str()) &&
-        curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, get_curl_data) &&
+
+    bool setup = curl_easy_setopt(handle, CURLOPT_URL, login_url.c_str()) ||
+        curl_easy_setopt(handle, CURLOPT_POSTFIELDS, req_body.c_str()) ||
+        curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, get_curl_data) ||
         curl_easy_setopt(handle, CURLOPT_WRITEDATA, &token);
 
     if(setup){
