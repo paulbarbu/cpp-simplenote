@@ -7,7 +7,7 @@ AR = ar
 
 CXX_FLAGS = -pedantic -Wall -Wshadow -Wpointer-arith -Wcast-qual -std=c++0x
 LD_FLAGS = -L. -lsimplenote -lcurl
-DBG_FLAGS = -g
+DBG_FLAGS = -g -DDEBUG
 AR_FLAGS = crvs
 SHARED_FLAGS = -shared -fPIC
 

@@ -78,7 +78,9 @@ void Simplenote::init(){
     }
 
     bool setup = curl_easy_setopt(handle, CURLOPT_ERRORBUFFER, err_buffer) ||
-        curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L) || // FIXME: remove in production
+        #ifdef DEBUG
+        curl_easy_setopt(handle, CURLOPT_VERBOSE, 1L) ||
+        #endif
         curl_easy_setopt(handle, CURLOPT_NOPROGRESS, 1L) ||
         curl_easy_setopt(handle, CURLOPT_POSTFIELDSIZE, -1) ||
         curl_easy_setopt(handle, CURLOPT_USERAGENT, user_agent.c_str()) ||
