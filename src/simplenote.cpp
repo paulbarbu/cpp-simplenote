@@ -7,10 +7,10 @@
 #include "includes/helpers.hpp"
 #include "includes/base64.h"
 
+#include <curl/curl.h>
+
 #include <cstring>
 #include <string>
-
-#include <curl/curl.h>
 
 using std::string;
 
@@ -23,19 +23,22 @@ using std::cout;
  * add tests
  * 
  * add docs
- * 
- * add a macro for DEBUG wich will set CURLOPT_VERBOSE
- * The debug macro will be set by make debug via -DDEBUG
  */
 
 /**
- * Explicit constructor for Simplenote that authenticates the user upon object creation
+ * Explicit constructor for Simplenote that authenticates the user upon object
+ * creation
  *
  * In this case the use of lazy loading is not a good choice
- * because the variables that would have been on the stack (user's email and password)
- * can be inspected.
+ * because the variables that would have been on the stack
+ * (user's email and password) can be inspected.
  * By authenticating the user right away enables this vulnerability for a short
  * period of time, until the token is received.
+ *
+ * @throw InitError if the setup of cURL fails
+ * @throw FetchError if no data can be fetched from Simplenote
+ * @throw AuthenticationError if after connecting to Simplenote, no token is
+ * received
  *
  * @param char* email the user's Simplenote email
  * @param char* password the user's password for Simplenote
@@ -70,6 +73,10 @@ string Simplenote::create_request_body(string email, string password){
                         body.length());
 }
 
+/**
+ * This function sets the cURL options for the object being created
+ * @throw InitError if the setup fails
+ */
 void Simplenote::init(){
     handle = curl_easy_init();
 
@@ -98,6 +105,19 @@ void Simplenote::init(){
     }
 }
 
+
+/**
+ * Tries to get the API token in order to use it for the actual note handling
+ * This is in fact the authentication process as seen by the Simplenote API
+ *
+ * @throw InitError if a cURL setup error occurs
+ * @throw FetchError if no data can be fetched from Simplenote
+ * @throw AuthenticationError if after connecting to Simplenote, no token is
+ * received
+ *
+ * @param string req_body the request body which consists of the email and
+ * password base64 encode3d as returned by Simplenote::create_request_body
+ */
 void Simplenote::authenticate(string req_body){
     /**
      * setup will have a value of 0 if cURL was set up successfully,
@@ -119,6 +139,11 @@ void Simplenote::authenticate(string req_body){
     if(CURLE_OK != retval){
         throw FetchError(err_buffer);
     }
+
+    if(token.empty()){
+        throw AuthenticationError("Could not authenticate, check your \
+            credentials and try again later!");
+    }
 }
 
 /**
@@ -136,9 +161,6 @@ void Simplenote::set_user_agent(string ua){
     }
 }
 
-/**
- * Temporary method
- */
 void Simplenote::debug(){
 }
 

@@ -64,4 +64,13 @@ class FetchError : public SimplenoteError{
         FetchError(const char *user_msg) : SimplenoteError(user_msg){}
 };
 
+class AuthenticationError : public SimplenoteError{
+    public:
+        AuthenticationError(){
+            msg = "An error occurred while fetching data!";
+        }
+
+        AuthenticationError(const char *user_msg) : SimplenoteError(user_msg){}
+};
+
 #endif

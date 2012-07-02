@@ -9,7 +9,8 @@ using std::string;
  * http://curl.haxx.se/libcurl/c/curl_easy_setopt.html
  *
  * @param char* ptr the response body
- * @param void* userdata pointer to string that will be populated with the response body
+ * @param void* userdata pointer to string that will be populated with the
+ * response body
  *
  * @return size_t the number of bytes taken care of
  */
