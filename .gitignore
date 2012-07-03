@@ -8,3 +8,5 @@
 *.*kdev*
 *.so
 *.a
+src/runner.cpp
+docs/html

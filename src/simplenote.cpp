@@ -14,16 +14,16 @@
 
 using std::string;
 
-//TODO: remove these
-#include <iostream>
-using std::cout;
-
 /**
  * TODO:
  * add tests
- * 
+ *
  * add docs
  */
+
+//TODO: remove these
+#include <iostream>
+using std::cout;
 
 /**
  * Explicit constructor for Simplenote that authenticates the user upon object
@@ -147,7 +147,7 @@ void Simplenote::authenticate(string req_body){
 }
 
 /**
- * Setter method for the user-Agent header used by cURL
+ * Setter method for the User-Agent header used by cURL
  *
  * @param string ua the new user agent
  */
