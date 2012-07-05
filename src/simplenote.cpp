@@ -127,7 +127,7 @@ void Simplenote::authenticate(string req_body){
 
     bool setup = curl_easy_setopt(handle, CURLOPT_URL, login_url.c_str()) ||
         curl_easy_setopt(handle, CURLOPT_POSTFIELDS, req_body.c_str()) ||
-        curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, get_curl_data) ||
+        curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, get_curl_string_data) ||
         curl_easy_setopt(handle, CURLOPT_WRITEDATA, &token);
 
     if(setup){

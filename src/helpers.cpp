@@ -3,7 +3,8 @@
 using std::string;
 
 /**
- * This is a callback function for cURL
+ * This is a callback function for cURL that populates a string
+ * (passed as void pointer) with the response body
  *
  * For details see CURLOPT_WRITEFUNCTION on
  * http://curl.haxx.se/libcurl/c/curl_easy_setopt.html
@@ -14,7 +15,7 @@ using std::string;
  *
  * @return size_t the number of bytes taken care of
  */
-size_t get_curl_data(char *ptr, size_t size, size_t nmemb, void *userdata){
+size_t get_curl_string_data(char *ptr, size_t size, size_t nmemb, void *userdata){
     string *data = (string *) userdata;
 
     data->assign(ptr);
