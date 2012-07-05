@@ -16,7 +16,9 @@ class Simplenote{
         char *err_buffer;
         
         std::string token, user_agent = "c++api_for_simplenote",
-            login_url = "https://simple-note.appspot.com/api/login";
+            login_url = "https://simple-note.appspot.com/api/login",
+            data_url = "https://simple-note.appspot.com/api2/data?auth=",
+            index_url = "https://simple-note.appspot.com/api2/index?auth=";
         
         std::string create_request_body(std::string email, std::string password);
         

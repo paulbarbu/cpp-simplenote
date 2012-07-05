@@ -53,6 +53,13 @@ Simplenote::Simplenote(const char *email, const char *password){
     // this function call may throw InitError or FetchError, so don't catch here
     // because the user should know if the object initialization failed
     authenticate(request_body);
+
+    string email_query_str = "&email=" + (string)email;
+
+    //because the token is set at this point we can modify the urls to contain
+    //the token, same for the email
+    data_url += token + email_query_str;
+    index_url += token + email_query_str;
 }
 
 /**
