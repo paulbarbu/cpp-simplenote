@@ -9,10 +9,13 @@
 
 #include <curl/curl.h>
 
-#include <cstring>
+// #include <cstring>
 #include <string>
+#include <set>
+
 
 using std::string;
+using std::set;
 
 /**
  * TODO:
@@ -166,6 +169,36 @@ void Simplenote::set_user_agent(string ua){
     if(!setup){
         throw InitError(err_buffer);
     }
+}
+
+/**
+ * Create a note
+ *
+ * @throw
+ * 
+ * @param
+ *
+ * @return string the newly created note's key
+ */
+string Simplenote::create_note(string content, set<string> tags=set<string>(),
+                   bool pinned=false, bool markdown=false, bool list=false){
+
+    string key;
+
+    //create the JSON POST data and init curl to send that
+    
+    bool setup = curl_easy_setopt(handle, CURLOPT_URL, data_url.c_str()) ||
+        curl_easy_setopt(handle, CURLOPT_POSTFIELDS, " FIXME ") || // FIXME
+        curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, get_curl_string_data) ||
+        curl_easy_setopt(handle, CURLOPT_WRITEDATA, &key);
+
+    if(setup){
+        throw InitError(err_buffer);
+    }
+
+    //perform the request and get the response (return it)
+    
+    return "a"; // FIXME
 }
 
 void Simplenote::debug(){

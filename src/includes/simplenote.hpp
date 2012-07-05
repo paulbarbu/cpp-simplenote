@@ -5,6 +5,7 @@
 
 #include <string>
 #include <exception>
+#include <set>
 
 /**
  * The main SimpleNote class
@@ -28,6 +29,8 @@ class Simplenote{
         Simplenote(const char *email, const char *password);
         void debug();
         void set_user_agent(std::string ua);
+        std::string create_note(std::string content, std::set<std::string> tags,
+                           bool pinned, bool markdown, bool list);
         ~Simplenote();
 };
 
