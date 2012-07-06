@@ -29,8 +29,8 @@ class Simplenote{
         Simplenote(const char *email, const char *password);
         void debug();
         void set_user_agent(std::string ua);
-        std::string create_note(std::string content, std::set<std::string> tags,
-                           bool pinned, bool markdown, bool list);
+        std::string create_note(std::string content, std::set<std::string> tags=std::set<std::string>(),
+                           bool pinned=false, bool markdown=false, bool list=false);
         ~Simplenote();
 };
 

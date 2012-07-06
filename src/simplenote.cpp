@@ -6,13 +6,12 @@
 #include "includes/simplenote.hpp"
 #include "includes/helpers.hpp"
 #include "includes/base64.h"
+#include "jsoncpp/json.h"
 
 #include <curl/curl.h>
 
-// #include <cstring>
 #include <string>
 #include <set>
-
 
 using std::string;
 using std::set;
@@ -174,31 +173,82 @@ void Simplenote::set_user_agent(string ua){
 /**
  * Create a note
  *
+ * Create the note object by putting together the necessary JSON, which is sent
+ * to Simplenote for processing, the actual note creation takes place at Simplenote
+ * 
+ * @throw InitError if a cURL setup error occurs
  * @throw
  * 
- * @param
+ * @param string content the note's text body
+ * @param set<string> tags a set of user defined tags, if these are provided
+ * the user may filter the notes in the Simplenote web interface by tags
+ * @param bool pinned if set to tre the note will appear at the top in the web
+ * interface of Simplenote
+ * @param bool markdown if the text body of the note is written in Markdown and
+ * this parameter is true then the note will be displayed formatted in the web
+ * interface
+ * @param bool list if this is true the note will appear as a to do list for
+ * the premium users
  *
- * @return string the newly created note's key
+ * @return map the newly created note
  */
-string Simplenote::create_note(string content, set<string> tags=set<string>(),
-                   bool pinned=false, bool markdown=false, bool list=false){
+string Simplenote::create_note(string content, set<string> tags,
+                   bool pinned, bool markdown, bool list){
+    string new_note;
+    Json::Value note, user_tags, system_tags;
 
-    string key;
+    note["content"] = content;
+    
+    if(tags.size()){
+        set<string>::iterator si;
+        
+        for(si=tags.begin(); si != tags.end(); si++){
+            user_tags.append(*si);
+        }
+        
+        note["tags"] = user_tags;
+    }
 
-    //create the JSON POST data and init curl to send that
+    if(pinned){
+        system_tags.append("pinned");
+    }
+
+    if(markdown){
+        system_tags.append("markdown");
+    }
+
+    if(list){
+        system_tags.append("list");
+    }
+
+    if(system_tags.size()){
+        note["systemtags"] = system_tags;
+    }
+
+    Json::FastWriter writer;
+    string req_body = writer.write(note);
     
     bool setup = curl_easy_setopt(handle, CURLOPT_URL, data_url.c_str()) ||
-        curl_easy_setopt(handle, CURLOPT_POSTFIELDS, " FIXME ") || // FIXME
+        curl_easy_setopt(handle, CURLOPT_POSTFIELDS, req_body.c_str()) ||
         curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, get_curl_string_data) ||
-        curl_easy_setopt(handle, CURLOPT_WRITEDATA, &key);
+        curl_easy_setopt(handle, CURLOPT_WRITEDATA, &new_note);
 
     if(setup){
         throw InitError(err_buffer);
     }
 
-    //perform the request and get the response (return it)
+    // TODO think abut the cases where the note isn't created, what does retval equals to?
+    // will the key be populated somehow in case of err?
+    // think of the exceptions
     
-    return "a"; // FIXME
+    CURLcode retval = curl_easy_perform(handle);
+
+    if(CURLE_OK != retval){
+        throw FetchError(err_buffer);
+    }
+
+    // TODO: parse the retrieved note with jsoncpp and create a map, return the map
+    return new_note;
 }
 
 void Simplenote::debug(){
