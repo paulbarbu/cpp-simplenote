@@ -16,7 +16,7 @@ AR_FLAGS = crvs
 SHARED_FLAGS = -shared -fPIC
 TEST_FLAGS = -o $(TEST_RUNNER_NAME).cpp --error-printer
 
-SRC_FILES = simplenote.cpp base64.cpp helpers.cpp
+SRC_FILES = simplenote.cpp note.cpp base64.cpp helpers.cpp
 OBJ_FILES = $(SRC_FILES:.cpp=.o)
 DBG_FILES = main.cpp
 TEST_FILES = tests/simplenote_tests.cpp

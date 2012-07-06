@@ -4,9 +4,11 @@
  * @author Barbu Paul - Gheorghe
  */
 #include "includes/simplenote.hpp"
+#include "includes/error.hpp"
+#include "includes/note.hpp"
 #include "includes/helpers.hpp"
 #include "includes/base64.h"
-#include "jsoncpp/json.h"
+#include "jsoncpp/json.h" //TODO remove
 
 #include <curl/curl.h>
 
@@ -172,6 +174,8 @@ void Simplenote::set_user_agent(string ua){
 
 /**
  * Create a note
+ * TODO modify this to take a Note object
+ * update the docs
  *
  * Create the note object by putting together the necessary JSON, which is sent
  * to Simplenote for processing, the actual note creation takes place at Simplenote
@@ -190,20 +194,21 @@ void Simplenote::set_user_agent(string ua){
  * @param bool list if this is true the note will appear as a to do list for
  * the premium users
  *
- * @return map the newly created note
+ * @return Note the newly created note
  */
-string Simplenote::create_note(string content, set<string> tags,
+Note Simplenote::create_note(string content, set<string> tags,
                    bool pinned, bool markdown, bool list){
-    string new_note;
+    string json_response;
+    // TODO: maybe I could abstract away the Json parts into the Note object?
     Json::Value note, user_tags, system_tags;
 
     note["content"] = content;
     
     if(tags.size()){
-        set<string>::iterator si;
+        set<string>::iterator i;
         
-        for(si=tags.begin(); si != tags.end(); si++){
-            user_tags.append(*si);
+        for(i=tags.begin(); i != tags.end(); i++){
+            user_tags.append(*i);
         }
         
         note["tags"] = user_tags;
@@ -231,15 +236,11 @@ string Simplenote::create_note(string content, set<string> tags,
     bool setup = curl_easy_setopt(handle, CURLOPT_URL, data_url.c_str()) ||
         curl_easy_setopt(handle, CURLOPT_POSTFIELDS, req_body.c_str()) ||
         curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, get_curl_string_data) ||
-        curl_easy_setopt(handle, CURLOPT_WRITEDATA, &new_note);
+        curl_easy_setopt(handle, CURLOPT_WRITEDATA, &json_response);
 
     if(setup){
         throw InitError(err_buffer);
     }
-
-    // TODO think abut the cases where the note isn't created, what does retval equals to?
-    // will the key be populated somehow in case of err?
-    // think of the exceptions
     
     CURLcode retval = curl_easy_perform(handle);
 
@@ -247,7 +248,14 @@ string Simplenote::create_note(string content, set<string> tags,
         throw FetchError(err_buffer);
     }
 
-    // TODO: parse the retrieved note with jsoncpp and create a map, return the map
+    if (json_response.empty()){
+        throw CreateError("Check your parameters, no note created!");
+    }
+
+    cout<<json_response; // FIXME REMOVE
+
+    Note new_note(json_response);
+    
     return new_note;
 }
 

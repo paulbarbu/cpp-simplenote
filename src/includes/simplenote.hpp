@@ -1,6 +1,8 @@
 #ifndef SIMPLENOTE_H_GUARD
 #define SIMPLENOTE_H_GUARD
 
+#include "note.hpp"
+
 #include <curl/curl.h>
 
 #include <string>
@@ -8,7 +10,7 @@
 #include <set>
 
 /**
- * The main SimpleNote class
+ * The main Simplenote class
  */
 class Simplenote{
     private:
@@ -29,53 +31,9 @@ class Simplenote{
         Simplenote(const char *email, const char *password);
         void debug();
         void set_user_agent(std::string ua);
-        std::string create_note(std::string content, std::set<std::string> tags=std::set<std::string>(),
+        Note create_note(std::string content, std::set<std::string> tags=std::set<std::string>(),
                            bool pinned=false, bool markdown=false, bool list=false);
         ~Simplenote();
-};
-
-class SimplenoteError : public std::exception{
-    protected:
-        std::string msg;
-    public:
-        SimplenoteError(){
-            msg = "An unknown error occurred!";
-        }
-
-        SimplenoteError(const char *user_msg){
-            msg = user_msg;
-        }
-        
-        virtual const char *what(){
-            return msg.c_str();
-        }
-};
-
-class InitError : public SimplenoteError{
-    public:
-        InitError(){
-            msg = "An error occurred during initialization!";
-        }
-        
-        InitError(const char *user_msg) : SimplenoteError(user_msg){}
-};
-
-class FetchError : public SimplenoteError{
-    public:
-        FetchError(){
-            msg = "An error occurred while fetching data!";
-        }
-
-        FetchError(const char *user_msg) : SimplenoteError(user_msg){}
-};
-
-class AuthenticationError : public SimplenoteError{
-    public:
-        AuthenticationError(){
-            msg = "An error occurred while fetching data!";
-        }
-
-        AuthenticationError(const char *user_msg) : SimplenoteError(user_msg){}
 };
 
 #endif
