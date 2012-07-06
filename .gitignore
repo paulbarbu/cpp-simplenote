@@ -6,7 +6,6 @@
 *.swp
 *~
 *.*kdev*
-*.so
-*.a
 src/runner.cpp
 docs/html
+*.pdf
