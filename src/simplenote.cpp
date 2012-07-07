@@ -100,6 +100,8 @@ void Simplenote::init(){
         curl_easy_setopt(handle, CURLOPT_POSTFIELDSIZE, -1) ||
         curl_easy_setopt(handle, CURLOPT_USERAGENT, user_agent.c_str()) ||
         curl_easy_setopt(handle, CURLOPT_MAXREDIRS, 0L) ||
+        curl_easy_setopt(handle, CURLOPT_CONNECTTIMEOUT, 60L) ||
+        curl_easy_setopt(handle, CURLOPT_TIMEOUT, 120L) ||
         curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, 1L) ||
         curl_easy_setopt(handle, CURLOPT_SSL_VERIFYHOST, 2);
 
