@@ -154,7 +154,7 @@ Note::Note(const string& content, const set<string>& tags, bool pinned, bool mar
  * @return string the JSON string created using the values of members of the
  * Note object
  */
-string Note::get_json(){
+string Note::get_json() const {
     Json::Value note;
     Json::FastWriter writer;
     set<string>::iterator i;
@@ -163,7 +163,12 @@ string Note::get_json(){
         note["key"] = key;
     }
 
-    note["deleted"] = deleted;
+    if(deleted){
+        note["deleted"] = 1;
+    }
+    else{
+        note["deleted"] = 0;
+    }
 
     if(!modifydate.empty()){
         note["modifydate"] = modifydate;
@@ -216,4 +221,8 @@ string Note::get_json(){
     note["content"] = content;
 
     return writer.write(note);
+}
+
+string Note::get_key(){
+    return key;
 }

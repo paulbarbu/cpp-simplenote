@@ -16,7 +16,9 @@ class Note{
         Note(){}
         Note(const std::string& json_str);
 
-        std::string get_json();
+        std::string get_key();
+
+        std::string get_json() const;
         /*
          * TODO fix this, think of something to create a note directly with properties
          * maybe a separate method: set_properties with this signature
