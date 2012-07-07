@@ -57,12 +57,10 @@ Simplenote::Simplenote(const string& email, const string& password){
     // because the user should know if the object initialization failed
     authenticate(request_body);
 
-    string email_query_str = "&email=" + email;
 
     //because the token is set at this point we can modify the urls to contain
-    //the token, same for the email
-    data_url += token + email_query_str;
-    index_url += token + email_query_str;
+    //the token and the email
+    query_str += token + "&email=" + email;
 }
 
 /**
@@ -189,8 +187,10 @@ void Simplenote::set_user_agent(const string& ua){
 Note Simplenote::create_note(Note n){
     //TODO modify this to: Note Simplenote::create_note(const Note& n)
     string json_response;
+
+    string url = data_url + query_str;
     
-    bool setup = curl_easy_setopt(handle, CURLOPT_URL, data_url.c_str()) ||
+    bool setup = curl_easy_setopt(handle, CURLOPT_URL, url.c_str()) ||
         curl_easy_setopt(handle, CURLOPT_POSTFIELDS, n.get_json().c_str()) ||
         curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, get_curl_string_data) ||
         curl_easy_setopt(handle, CURLOPT_WRITEDATA, &json_response);

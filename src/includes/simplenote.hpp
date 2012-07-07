@@ -16,11 +16,12 @@ class Simplenote{
         CURL *handle;
         
         char *err_buffer;
+
+        const std::string login_url = "https://simple-note.appspot.com/api/login";
         
-        std::string token, user_agent = "c++api_for_simplenote",
-            login_url = "https://simple-note.appspot.com/api/login",
-            data_url = "https://simple-note.appspot.com/api2/data?auth=",
-            index_url = "https://simple-note.appspot.com/api2/index?auth=";
+        std::string token, query_str = "?auth=", user_agent = "c++api_for_simplenote",
+            data_url = "https://simple-note.appspot.com/api2/data",
+            index_url = "https://simple-note.appspot.com/api2/index";
         
         std::string create_request_body(const std::string& email,
                                         const std::string& password);
