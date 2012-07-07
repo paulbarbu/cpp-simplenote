@@ -32,7 +32,9 @@ class Simplenote{
         Simplenote(const std::string& email, const std::string& password);
         void debug();
         void set_user_agent(const std::string& ua);
-        Note create_note(Note n);
+        Note create_note(const Note& n);
+        Note get_note(const std::string& key);
+        Note get_note(const std::string& key, int version); //TODO what if version is wrong?
         ~Simplenote();
 };
 

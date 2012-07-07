@@ -184,8 +184,7 @@ void Simplenote::set_user_agent(const string& ua){
  *
  * @return Note the newly created note
  */
-Note Simplenote::create_note(Note n){
-    //TODO modify this to: Note Simplenote::create_note(const Note& n)
+Note Simplenote::create_note(const Note& n){
     string json_response;
 
     string url = data_url + query_str;
@@ -212,6 +211,33 @@ Note Simplenote::create_note(Note n){
     Note new_note(json_response);
     
     return new_note;
+}
+
+Note Simplenote::get_note(const string& key){
+    string json_response, url = data_url + "/" + key + query_str;
+
+    bool setup = curl_easy_setopt(handle, CURLOPT_HTTPGET, 1L) ||
+        curl_easy_setopt(handle, CURLOPT_URL, url.c_str()) ||
+        curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, get_curl_string_data) ||
+        curl_easy_setopt(handle, CURLOPT_WRITEDATA, &json_response);
+
+    if(setup){
+        throw InitError(err_buffer);
+    }
+
+    CURLcode retval = curl_easy_perform(handle);
+
+    if(CURLE_OK != retval){
+        throw FetchError(err_buffer);
+    }
+
+    if (json_response.empty()){
+        throw FetchError("No note retrieved, maybe it doesn't exist!");
+    }
+
+    Note note(json_response);
+
+    return note;
 }
 
 void Simplenote::debug(){
