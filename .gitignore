@@ -9,3 +9,4 @@
 src/runner.cpp
 docs/html
 *.pdf
+.credentials.in

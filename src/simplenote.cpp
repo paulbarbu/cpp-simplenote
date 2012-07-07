@@ -22,6 +22,11 @@ using std::set;
  * add tests
  *
  * add docs
+ * 
+ * debug and throw errs with network down
+ * try-catch the simplenote ctor, SIGSERV in cURL...
+ *
+ * set cURL via a map or set, or something
  */
 
 //TODO: remove these
