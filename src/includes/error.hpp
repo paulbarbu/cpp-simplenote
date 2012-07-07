@@ -1,6 +1,8 @@
 #ifndef ERROR_H_GUARD
 #define ERROR_H_GUARD
 
+#include <exception>
+
 class Error : public std::exception{
     protected:
         std::string msg;
