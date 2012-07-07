@@ -173,67 +173,25 @@ void Simplenote::set_user_agent(const string& ua){
 
 /**
  * Create a note
- * TODO modify this to take a Note object
- * update the docs
  *
- * Create the note object by putting together the necessary JSON, which is sent
- * to Simplenote for processing, the actual note creation takes place at Simplenote
- * 
+ * The actual note creation takes place at Simplenote
+ *
  * @throw InitError if a cURL setup error occurs
- * @throw
+ * @throw FetchError if no or errorneous data can be fetched from Simplenote
+ * @throw CreateError if the note was not created
+ * @throw ParseError if the retrieved data from the new note cannot be parsed,
+ * see Note::Note(string json_str)
  * 
- * @param string content the note's text body
- * @param set<string> tags a set of user defined tags, if these are provided
- * the user may filter the notes in the Simplenote web interface by tags
- * @param bool pinned if set to tre the note will appear at the top in the web
- * interface of Simplenote
- * @param bool markdown if the text body of the note is written in Markdown and
- * this parameter is true then the note will be displayed formatted in the web
- * interface
- * @param bool list if this is true the note will appear as a to do list for
- * the premium users
+ * @param Note the note object that will be sent as JSON for creation
  *
  * @return Note the newly created note
  */
-Note Simplenote::create_note(string content, set<string> tags,
-                   bool pinned, bool markdown, bool list){
+Note Simplenote::create_note(Note n){
+    //TODO modify this to: Note Simplenote::create_note(const Note& n)
     string json_response;
-    // TODO: maybe I could abstract away the Json parts into the Note object?
-    Json::Value note, user_tags, system_tags;
-
-    note["content"] = content;
-    
-    if(tags.size()){
-        set<string>::iterator i;
-        
-        for(i=tags.begin(); i != tags.end(); i++){
-            user_tags.append(*i);
-        }
-        
-        note["tags"] = user_tags;
-    }
-
-    if(pinned){
-        system_tags.append("pinned");
-    }
-
-    if(markdown){
-        system_tags.append("markdown");
-    }
-
-    if(list){
-        system_tags.append("list");
-    }
-
-    if(system_tags.size()){
-        note["systemtags"] = system_tags;
-    }
-
-    Json::FastWriter writer;
-    string req_body = writer.write(note);
     
     bool setup = curl_easy_setopt(handle, CURLOPT_URL, data_url.c_str()) ||
-        curl_easy_setopt(handle, CURLOPT_POSTFIELDS, req_body.c_str()) ||
+        curl_easy_setopt(handle, CURLOPT_POSTFIELDS, n.get_json().c_str()) ||
         curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, get_curl_string_data) ||
         curl_easy_setopt(handle, CURLOPT_WRITEDATA, &json_response);
 
@@ -250,8 +208,6 @@ Note Simplenote::create_note(string content, set<string> tags,
     if (json_response.empty()){
         throw CreateError("Check your parameters, no note created!");
     }
-
-    cout<<json_response; // FIXME REMOVE
 
     Note new_note(json_response);
     
