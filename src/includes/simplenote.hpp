@@ -33,8 +33,7 @@ class Simplenote{
         void debug();
         void set_user_agent(const std::string& ua);
         Note create_note(const Note& n);
-        Note get_note(const std::string& key);
-        Note get_note(const std::string& key, int version); //TODO what if version is wrong?
+        Note get_note(const std::string& key, unsigned int version=0);
         ~Simplenote();
 };
 

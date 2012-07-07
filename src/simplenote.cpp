@@ -13,9 +13,11 @@
 
 #include <string>
 #include <set>
+#include <sstream>
 
 using std::string;
 using std::set;
+using std::stringstream;
 
 /**
  * TODO:
@@ -27,6 +29,10 @@ using std::set;
  * try-catch the simplenote ctor, SIGSERV in cURL...
  *
  * set cURL via a map or set, or something
+ *
+ * abstract away the curl_easy_perform parts
+ *
+ * what if the token becomes invalid (if the app using this lib runs for long hours?)
  */
 
 //TODO: remove these
@@ -108,7 +114,7 @@ void Simplenote::init(){
         curl_easy_setopt(handle, CURLOPT_CONNECTTIMEOUT, 60L) ||
         curl_easy_setopt(handle, CURLOPT_TIMEOUT, 120L) ||
         curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, 1L) ||
-        curl_easy_setopt(handle, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_easy_setopt(handle, CURLOPT_SSL_VERIFYHOST, 2L);
 
     /**
      * setup will have a value of 0 if cURL was set up successfully,
@@ -197,6 +203,7 @@ Note Simplenote::create_note(const Note& n){
     string url = data_url + query_str;
     
     bool setup = curl_easy_setopt(handle, CURLOPT_URL, url.c_str()) ||
+        curl_easy_setopt(handle, CURLOPT_HTTPPOST, 1) ||
         curl_easy_setopt(handle, CURLOPT_POSTFIELDS, n.get_json().c_str()) ||
         curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, get_curl_string_data) ||
         curl_easy_setopt(handle, CURLOPT_WRITEDATA, &json_response);
@@ -220,8 +227,12 @@ Note Simplenote::create_note(const Note& n){
     return new_note;
 }
 
-Note Simplenote::get_note(const string& key){
-    string json_response, url = data_url + "/" + key + query_str;
+Note Simplenote::get_note(const string& key, unsigned int version){
+    // TODO ask about the versiondate key
+    stringstream t;
+    t<<version;
+
+    string json_response, url = data_url + "/" + key + "/" + t.str() + query_str;
 
     bool setup = curl_easy_setopt(handle, CURLOPT_HTTPGET, 1L) ||
         curl_easy_setopt(handle, CURLOPT_URL, url.c_str()) ||
@@ -239,7 +250,8 @@ Note Simplenote::get_note(const string& key){
     }
 
     if (json_response.empty()){
-        throw FetchError("No note retrieved, maybe it doesn't exist!");
+        throw FetchError("No note retrieved, maybe it doesn't exist or"
+            " maybe the selected version is wrong!");
     }
 
     Note note(json_response);
