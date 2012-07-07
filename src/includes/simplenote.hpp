@@ -6,7 +6,6 @@
 #include <curl/curl.h>
 
 #include <string>
-#include <exception>
 #include <set>
 
 /**
@@ -23,16 +22,16 @@ class Simplenote{
             data_url = "https://simple-note.appspot.com/api2/data?auth=",
             index_url = "https://simple-note.appspot.com/api2/index?auth=";
         
-        std::string create_request_body(std::string email, std::string password);
+        std::string create_request_body(const std::string& email,
+                                        const std::string& password);
         
         void init();
-        void authenticate(std::string req_body);
+        void authenticate(const std::string& req_body);
     public:
-        Simplenote(const char *email, const char *password);
+        Simplenote(const std::string& email, const std::string& password);
         void debug();
-        void set_user_agent(std::string ua);
-        Note create_note(std::string content, std::set<std::string> tags=std::set<std::string>(),
-                           bool pinned=false, bool markdown=false, bool list=false);
+        void set_user_agent(const std::string& ua);
+        Note create_note(Note n);
         ~Simplenote();
 };
 

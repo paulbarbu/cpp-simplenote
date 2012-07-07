@@ -8,7 +8,6 @@
 #include "includes/note.hpp"
 #include "includes/helpers.hpp"
 #include "includes/base64.h"
-#include "jsoncpp/json.h" //TODO remove
 
 #include <curl/curl.h>
 
@@ -47,18 +46,18 @@ using std::cout;
  * @param char* email the user's Simplenote email
  * @param char* password the user's password for Simplenote
  */
-Simplenote::Simplenote(const char *email, const char *password){
+Simplenote::Simplenote(const string& email, const string& password){
     // this function call may throw InitError, so don't catch it
     // because the user should know if the object initialization failed
     init();
 
-    string request_body = create_request_body((string)email, (string)password);
+    string request_body = create_request_body(email, password);
 
     // this function call may throw InitError or FetchError, so don't catch here
     // because the user should know if the object initialization failed
     authenticate(request_body);
 
-    string email_query_str = "&email=" + (string)email;
+    string email_query_str = "&email=" + email;
 
     //because the token is set at this point we can modify the urls to contain
     //the token, same for the email
@@ -77,7 +76,7 @@ Simplenote::Simplenote(const char *email, const char *password){
  *
  * @return string the base64 encoded request body
  */
-string Simplenote::create_request_body(string email, string password){
+string Simplenote::create_request_body(const string& email, const string& password){
     const string body = "email=" + email + "&password=" + password;
 
     return base64_encode(reinterpret_cast<const unsigned char*>(body.c_str()),
@@ -129,7 +128,7 @@ void Simplenote::init(){
  * @param string req_body the request body which consists of the email and
  * password base64 encode3d as returned by Simplenote::create_request_body
  */
-void Simplenote::authenticate(string req_body){
+void Simplenote::authenticate(const string& req_body){
     /**
      * setup will have a value of 0 if cURL was set up successfully,
      * else it will have a different value, see: man libcurl-errors
@@ -162,7 +161,7 @@ void Simplenote::authenticate(string req_body){
  *
  * @param string ua the new user agent
  */
-void Simplenote::set_user_agent(string ua){
+void Simplenote::set_user_agent(const string& ua){
     user_agent = ua;
 
     CURLcode setup = curl_easy_setopt(handle, CURLOPT_USERAGENT, user_agent.c_str());
