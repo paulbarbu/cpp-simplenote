@@ -3,21 +3,34 @@
 #include "jsoncpp/json.h"
 
 #include <string>
-#include <vector>
+#include <set>
 
 using std::string;
-using std::vector;
+using std::set;
 
-/*
- * TODO get_json
- * this is already an obj, so I can access key, contents, deleted, etc
- *
- * overload for individual arguments
- *
- * default ctor?
+//TODO REMOVE
+#include <iostream>
+using std::cout;
+
+/**
+ * TODO:
+ * 
+ * check if modifydate, createdate should be private, will they be automatically
+ * modified on note updates?
+ * should I manually update them?
+ * are there usecases when I'd want to handle them manually?
+ *  - modify and create date are set upon creation
  */
 
-Note::Note(string json_str){
+/**
+ * Note constructor
+ *
+ * @throw ParseError if the json_str cannot be parsed by jsoncpp
+ * 
+ * @param string json_str the JSON string from which the Note members will be
+ * populated
+ */
+Note::Note(const string& json_str){
     Json::Value root;
     Json::Reader reader;
 
@@ -84,4 +97,123 @@ Note::Note(string json_str){
     if(root.isMember("content") && root["content"].isString()){
         content = root["content"].asString();
     }
+}
+
+/**
+ * Overloaded Note constructor
+ *
+ * @param string content the note's text body
+ * @param set<string> tags a set of user defined tags, if these are provided
+ * the user may filter the notes in the Simplenote web interface by tags
+ * @param bool pinned if set to true the note will appear at the top in the web
+ * interface of Simplenote
+ * @param bool markdown if the text body of the note is written in Markdown and
+ * this parameter is true then the note will be displayed formatted in the web
+ * interface
+ * @param bool list if this is true the note will appear as a to do list for
+ * the premium users of the iOS app
+ *
+Note::Note(const string& content, const set<string>& tags, bool pinned, bool markdown,
+           bool list){
+
+    Json::Value note, _tags, _systemtags;
+
+    note["content"] = content;
+
+    if(tags.size()){
+        set<string>::iterator i;
+
+        for(i=tags.begin(); i != tags.end(); i++){
+            _tags.append(*i);
+        }
+
+        note["tags"] = _tags;
+    }
+
+    if(pinned){
+        _systemtags.append("pinned");
+    }
+
+    if(markdown){
+        _systemtags.append("markdown");
+    }
+
+    if(list){
+        _systemtags.append("list");
+    }
+
+    if(_systemtags.size()){
+        note["systemtags"] = _systemtags;
+    }
+}
+*/
+
+/**
+ * Get the JSON string for the Note object
+ *
+ * @return string the JSON string created using the values of members of the
+ * Note object
+ */
+string Note::get_json(){
+    Json::Value note;
+    Json::FastWriter writer;
+    set<string>::iterator i;
+
+    if(!key.empty()){
+        note["key"] = key;
+    }
+
+    note["deleted"] = deleted;
+
+    if(!modifydate.empty()){
+        note["modifydate"] = modifydate;
+    }
+
+    if(!createdate.empty()){
+        note["createdate"] = createdate;
+    }
+    
+    if(-1 != syncnum){
+        note["syncnum"] = syncnum;
+    }
+
+    if(-1 != version){
+        note["version"] = version;
+    }
+
+    if(-1 != minversion){
+        note["minversion"] = minversion;
+    }
+
+    if(!sharekey.empty()){
+        note["sharekey"] = sharekey;
+    }
+    
+    if(!publishkey.empty()){
+        note["publishkey"] = publishkey;
+    }
+
+    if(systemtags.size()){
+        Json::Value _systemtags;
+
+        for(i=systemtags.begin(); i != systemtags.end(); i++){
+            _systemtags.append(*i);
+        }
+        
+        note["systemtags"] = _systemtags;
+    }
+
+    if(tags.size()){
+        Json::Value _tags;
+
+        for(i=tags.begin(); i != tags.end(); i++){
+            _tags.append(*i);
+        }
+        
+        note["tags"] = _tags;
+    }
+    
+    note["content"] = content;
+
+    return writer.write(note);
 }

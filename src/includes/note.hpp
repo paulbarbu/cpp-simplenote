@@ -6,13 +6,24 @@
 
 class Note{
     private:
-        std::string jsonify(); // TODO
+        std::string key, modifydate, createdate, sharekey, publishkey;
+        int syncnum = -1, version = -1, minversion = -1;
     public:
-        Note(std::string json_str);
-        std::string key, modifydate, createdate, sharekey, publishkey, content;
-        bool deleted;
-        int syncnum, version, minversion;
+        std::string content;
+        bool deleted=false;
         std::set<std::string> systemtags, tags;
+
+        Note(){}
+        Note(const std::string& json_str);
+
+        std::string get_json();
+        /*
+         * TODO fix this, think of something to create a note directly with properties
+         * maybe a separate method: set_properties with this signature
+        Note(const std::string& content,
+             const std::set<std::string>& tags=std::set<std::string>(),
+             bool pinned=false, bool markdown=false, bool list=false);
+             */
 };
 
 #endif
