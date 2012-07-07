@@ -2,6 +2,7 @@
 #define ERROR_H_GUARD
 
 #include <exception>
+#include <cstring>
 
 class Error : public std::exception{
     protected:
@@ -12,7 +13,9 @@ class Error : public std::exception{
         }
 
         Error(const char *user_msg){
-            msg = user_msg;
+            if(user_msg && strlen(user_msg)){
+                msg = user_msg;
+            }
         }
 
         virtual const char *what(){
@@ -32,7 +35,8 @@ class InitError : public Error{
 class FetchError : public Error{
     public:
         FetchError(){
-            msg = "An error occurred while fetching data!";
+            msg = "An error occurred while fetching data"
+                ", it's worth to check your network connection!";
         }
 
         FetchError(const char *user_msg) : Error(user_msg){}
@@ -41,7 +45,7 @@ class FetchError : public Error{
 class AuthenticationError : public Error{
     public:
         AuthenticationError(){
-            msg = "An error occurred while fetching data!";
+            msg = "An error occurred while authenticating!";
         }
 
         AuthenticationError(const char *user_msg) : Error(user_msg){}
@@ -59,7 +63,7 @@ class CreateError : public Error{
 class ParseError : public Error{
     public:
         ParseError(){
-            msg = "An error occurred while parsing the note!";
+            msg = "A parse error has occurred!";
         }
 
         ParseError(const char *user_msg) : Error(user_msg){}
