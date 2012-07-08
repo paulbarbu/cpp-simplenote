@@ -4,29 +4,16 @@
 
 #include <string>
 #include <set>
+#include <sstream>
+#include <ctime>
 
 using std::string;
 using std::set;
+using std::stringstream;
 
 //TODO REMOVE
 #include <iostream>
 using std::cout;
-
-/**
- * TODO:
- * 
- * check if modifydate, createdate should be private, will they be automatically
- * modified on note updates?
- * should I manually update them?
- * are there usecases when I'd want to handle them manually?
- *  - modify and create date are set upon creation
- *
- * So, yeah, if the note is changed locally, that should be the time for the
- * modification/creation if the note is sent to simplenote later.
- * Conclusion:
- * Set modification and creation date in ctor to the same value, on every other
- * modification of members change modification date
- */
 
 /**
  * Note constructor
@@ -57,11 +44,23 @@ Note::Note(const string& json_str){
     }
 
     if(root.isMember("modifydate") && root["modifydate"].isString()){
-        modifydate = root["modifydate"].asString();
+        stringstream _mdate;
+        _mdate<<root["modifydate"].asString();
+        
+        _mdate>>modifydate;
+    }
+    else{
+        modifydate = std::time(NULL);
     }
     
     if(root.isMember("createdate") && root["createdate"].isString()){
-        createdate = root["createdate"].asString();
+        stringstream _cdate;
+        _cdate<<root["createdate"].asString();
+
+        _cdate>>createdate;
+    }
+    else{
+        createdate = std::time(NULL);
     }
 
     if(root.isMember("syncnum") && root["syncnum"].isInt()){
@@ -180,12 +179,18 @@ string Note::get_json(bool pub) const {
         note["deleted"] = 0;
     }
 
-    if(!modifydate.empty()){
-        note["modifydate"] = modifydate;
+    if(-1 != modifydate){
+        stringstream _mdate;
+        
+        _mdate<<modifydate;
+        note["modifydate"] = _mdate.str();
     }
 
-    if(!createdate.empty()){
-        note["createdate"] = createdate;
+    if(-1 != createdate){
+        stringstream _cdate;
+        
+        _cdate<<createdate;
+        note["createdate"] = _cdate.str();
     }
     
     if(!pub && -1 != syncnum){

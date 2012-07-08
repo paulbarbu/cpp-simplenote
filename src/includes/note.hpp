@@ -3,20 +3,57 @@
 
 #include <string>
 #include <set>
+#include <ctime>
 
 class Note{
     private:
-        std::string key, modifydate, createdate, sharekey, publishkey;
+        std::string key, sharekey, publishkey, content;
         int syncnum = -1, version = -1, minversion = -1;
-    public:
-        std::string content;
+        std::time_t modifydate = -1, createdate = -1;
         bool deleted=false;
         std::set<std::string> systemtags, tags;
+    public:
 
         Note(){}
         Note(const std::string& json_str);
 
         std::string get_key() const;
+        void set_content(const std::string& c){
+            modifydate = std::time(NULL);
+            content = c;
+        }
+
+        std::string get_content() const {
+            return content;
+        }
+
+        void trash(){
+            modifydate = std::time(NULL);
+            deleted = true;
+        }
+
+        void untrash(){
+            modifydate = std::time(NULL);
+            deleted = false;
+        }
+
+        void set_systemtags(std::set<std::string> systags){
+            modifydate = std::time(NULL);
+            systemtags = systags;
+        }
+        
+        std::set<std::string> get_systemtags() const {
+            return systemtags;
+        }
+
+        void set_tags(std::set<std::string> t){
+            modifydate = std::time(NULL);
+            tags = t;
+        }
+
+        std::set<std::string> get_tags() const {
+            return tags;
+        }
 
         std::string get_json(bool pub=false) const;
         /*
