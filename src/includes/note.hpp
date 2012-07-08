@@ -16,7 +16,7 @@ class Note{
         Note(){}
         Note(const std::string& json_str);
 
-        std::string get_key();
+        std::string get_key() const;
 
         std::string get_json() const;
         /*

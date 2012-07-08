@@ -20,6 +20,12 @@ using std::cout;
  * should I manually update them?
  * are there usecases when I'd want to handle them manually?
  *  - modify and create date are set upon creation
+ *
+ * So, yeah, if the note is changed locally, that should be the time for the
+ * modification/creation if the note is sent to simplenote later.
+ * Conclusion:
+ * Set modification and creation date in ctor to the same value, on every other
+ * modification of members change modification date
  */
 
 /**
@@ -223,6 +229,6 @@ string Note::get_json() const {
     return writer.write(note);
 }
 
-string Note::get_key(){
+string Note::get_key() const {
     return key;
 }
