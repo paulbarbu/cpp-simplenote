@@ -60,7 +60,7 @@ Note::Note(const string& json_str){
         _cdate>>createdate;
     }
     else{
-        createdate = std::time(NULL);
+        createdate = modifydate;
     }
 
     if(root.isMember("syncnum") && root["syncnum"].isInt()){
