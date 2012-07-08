@@ -60,6 +60,15 @@ class CreateError : public Error{
         CreateError(const char *user_msg) : Error(user_msg){}
 };
 
+class UpdateError : public Error{
+    public:
+        UpdateError(){
+            msg = "An update error has occurred!";
+        }
+
+        UpdateError(const char *user_msg) : Error(user_msg){}
+};
+
 class ParseError : public Error{
     public:
         ParseError(){
