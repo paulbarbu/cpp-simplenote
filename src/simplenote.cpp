@@ -259,6 +259,48 @@ Note Simplenote::get_note(const string& key, unsigned int version){
     return note;
 }
 
+/**
+ * Updates a note
+ *
+ * The Note matching the version number will be updated
+ *
+ * @param Note n the note having its members modified that should update the
+ * online note stored at Simplenote
+ *
+ * @return Note object representing the updated note
+ */
+Note Simplenote::update(const Note& n){
+    string json_response, url = data_url + "/" + n.get_key() + query_str;
+    
+    bool setup = curl_easy_setopt(handle, CURLOPT_URL, url.c_str()) ||
+        curl_easy_setopt(handle, CURLOPT_HTTPPOST, 1) ||
+        curl_easy_setopt(handle, CURLOPT_POSTFIELDS, n.get_json(true).c_str()) ||
+        curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, get_curl_string_data) ||
+        curl_easy_setopt(handle, CURLOPT_WRITEDATA, &json_response);
+
+    if(setup){
+        throw InitError(err_buffer);
+    }
+
+    CURLcode retval = curl_easy_perform(handle);
+
+    if(CURLE_OK != retval){
+        throw FetchError(err_buffer);
+    }
+    
+    if (json_response.empty()){
+        throw UpdateError();
+    }
+
+    Note note(json_response);
+
+    if(note.content.empty()){
+        note.content = n.content;
+    }
+
+    return note;
+}
+
 void Simplenote::debug(){
 }
 

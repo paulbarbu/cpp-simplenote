@@ -34,6 +34,7 @@ class Simplenote{
         void set_user_agent(const std::string& ua);
         Note create_note(const Note& n);
         Note get_note(const std::string& key, unsigned int version=0);
+        Note update(const Note& n);
         ~Simplenote();
 };
 
