@@ -23,16 +23,16 @@ int main(){
 //         cout<<"1The exception was:"<<e.what();
 //     }
     
-    set<string> tags = {"abd", "foo"};
+    set<string> tags = {"abcd", "fcoo"};
     Note foo, x, y;
-    foo.content = "notecontent";
+    foo.content = "notecontent-afterGETdoPOST";
     foo.tags = tags;
 
     //x = a.create_note(foo);
 
-    int variable;
+    /*int variable;
     cout<<"\n\nWAITING!!!\n\n";
-    cin>>variable;
+    cin>>variable;*/
 
     try{
 
@@ -42,6 +42,19 @@ int main(){
     catch(Error& e){
         cout<<"The exception was:"<<e.what();
     }
+
+    
+    //x = a.create_note(foo);
+
+    cout<<"\n"<<x.get_json()<<"\n";
+    y = x;
+
+    y.content = y.content + "zz";
+
+    cout<<"new:"<<y.get_json();
+
+
+    x = a.update(y);
     
     cout<<"\nDeleted: "<<x.deleted;
     set<string>::iterator i;

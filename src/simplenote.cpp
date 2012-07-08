@@ -227,6 +227,20 @@ Note Simplenote::create_note(const Note& n){
     return new_note;
 }
 
+/**
+ * Gets a Note object
+ *
+ * The default version of the note is the current one, which includes all the
+ * details of the note, however if you specifiy a version argument,
+ * then you'll get a stripped down Note object (that's how Simplenote works)
+ *
+ * @param string key the note's key you want to get
+ * @param int version the note's version (defaults to the most recent version)
+ *
+ * @return a Note object, take care that if you specify other version number
+ * than 0 then you'll get a stripped down version of a note (which consists only
+ * of the contents, the version retrieved and whether the note was deleted
+ */
 Note Simplenote::get_note(const string& key, unsigned int version){
     // TODO ask about the versiondate key
     stringstream t;
