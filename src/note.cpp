@@ -157,15 +157,19 @@ Note::Note(const string& content, const set<string>& tags, bool pinned, bool mar
 /**
  * Get the JSON string for the Note object
  *
+ * @param bool pub if this parameter is true then only the parts of the
+ * note that the user or the program can change are used
+ * (those set by the Simplenote servers are excluded)
+ *
  * @return string the JSON string created using the values of members of the
  * Note object
  */
-string Note::get_json() const {
+string Note::get_json(bool pub) const {
     Json::Value note;
     Json::FastWriter writer;
     set<string>::iterator i;
 
-    if(!key.empty()){
+    if(!pub && !key.empty()){
         note["key"] = key;
     }
 
@@ -184,23 +188,23 @@ string Note::get_json() const {
         note["createdate"] = createdate;
     }
     
-    if(-1 != syncnum){
+    if(!pub && -1 != syncnum){
         note["syncnum"] = syncnum;
     }
 
-    if(-1 != version){
+    if(!pub && -1 != version){
         note["version"] = version;
     }
 
-    if(-1 != minversion){
+    if(!pub && -1 != minversion){
         note["minversion"] = minversion;
     }
 
-    if(!sharekey.empty()){
+    if(!pub && !sharekey.empty()){
         note["sharekey"] = sharekey;
     }
     
-    if(!publishkey.empty()){
+    if(!pub && !publishkey.empty()){
         note["publishkey"] = publishkey;
     }
 
