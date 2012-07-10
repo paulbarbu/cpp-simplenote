@@ -34,7 +34,9 @@ class Simplenote{
         void set_user_agent(const std::string& ua);
         Note create_note(const Note& n);
         Note get_note(const std::string& key, unsigned int version=0);
-        Note update(const Note& n);
+        Note update(const Note& n); //TODO think wether to return a Note or to modify the referenced one and to void the function
+        void trash(const Note& n); // same
+        Note restore(const Note& n); //this is ok because by restoring you don;t have a note initially
         ~Simplenote();
 };
 
