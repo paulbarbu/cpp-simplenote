@@ -308,9 +308,8 @@ Note Simplenote::update(const Note& n){
 
     Note note(json_response);
 
-    if(note.get_content().empty()){
-        //TODO think of how to update the note without changing its modifydate locally
-        note.set_content(n.get_content());
+    if(note.content.empty()){
+        note.content = n.content;
     }
 
     return note;
