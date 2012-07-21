@@ -1,3 +1,7 @@
+Use this at your own risk because I don't plan to support it anymore because of
+the Simperium library.
+
+
 C++ API for Simplenote
 ======================
 C++ library for accessing the Simplenote API.
